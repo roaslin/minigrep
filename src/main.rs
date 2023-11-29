@@ -8,7 +8,18 @@ fn main() {
         eprintln!("Problem parsing arguments: {err}");
         process::exit(1);
     });
-    // Valid error handling more verbose
+
+    // Different ways of handling errors
+
+    // if let structure
+
+    // let config = if let Err(e) = Config::build(&args) {
+    //     eprintln!("Problem parsing arguments: {e}");
+    //     process::exit(1);
+    // };
+
+    // Valid error handling more verbose with Match
+
     // let config: Config = match config {
     //     Ok(value) => value,
     //     Err(err) => {
