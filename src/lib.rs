@@ -24,3 +24,49 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+
+pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+    let mut result: Vec<&str> = Vec::new();
+    for line in contents.lines() {
+        if line.contains(query) {
+            result.push(line.trim());
+        }
+    }
+    result
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn returns_empty_vector_when_contents_is_empty() {
+        let query = "duct";
+        let contents = "";
+        let empty_vector: Vec<&str> = Vec::from([]);
+
+        assert_eq!(empty_vector, search(query, contents));
+    }
+
+    #[test]
+    fn returns_one_line_when_contents_contain_query() {
+        let query = "duct";
+        let contents = "cacafuti ductionary";
+
+        assert_eq!(Vec::from(["cacafuti ductionary"]), search(query, contents));
+    }
+
+    #[test]
+    fn returns_two_lines_when_contents_contain_query() {
+        let query = "duct";
+        let contents = "cacafuti ductionary
+        Duck duct Go,
+        call me
+        ";
+
+        assert_eq!(
+            Vec::from(["cacafuti ductionary", "Duck duct Go,"]),
+            search(query, contents)
+        );
+    }
+}
