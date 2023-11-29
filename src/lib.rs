@@ -20,17 +20,27 @@ impl Config {
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(config.file_path)?;
 
-    for line in search(&config.query, &contents) {
+    for line in search_case_sensitive(&config.query, &contents) {
         println!("{line}");
     }
 
     Ok(())
 }
 
-pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+pub fn search_case_sensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     let mut result: Vec<&str> = Vec::new();
     for line in contents.lines() {
         if line.contains(query) {
+            result.push(line.trim());
+        }
+    }
+    result
+}
+
+pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+    let mut result: Vec<&str> = Vec::new();
+    for line in contents.lines() {
+        if line.to_lowercase().contains(&query.to_lowercase()) {
             result.push(line.trim());
         }
     }
@@ -47,7 +57,7 @@ mod tests {
         let contents = "";
         let empty_vector: Vec<&str> = Vec::from([]);
 
-        assert_eq!(empty_vector, search(query, contents));
+        assert_eq!(empty_vector, search_case_sensitive(query, contents));
     }
 
     #[test]
@@ -55,7 +65,10 @@ mod tests {
         let query = "Duct";
         let contents = "cacafuti Ductionary";
 
-        assert_eq!(Vec::from(["cacafuti Ductionary"]), search(query, contents));
+        assert_eq!(
+            Vec::from(["cacafuti Ductionary"]),
+            search_case_sensitive(query, contents)
+        );
     }
 
     #[test]
@@ -68,7 +81,21 @@ mod tests {
 
         assert_eq!(
             Vec::from(["Duck duct Go,", "call me Ducktor"]),
-            search(query, contents)
+            search_case_sensitive(query, contents)
+        );
+    }
+
+    #[test]
+    fn returns_two_lines_when_contents_case_insensitive_query() {
+        let query = "duck";
+        let contents = "cacafuti ductionary
+        Duck duct Go,
+        call me Ducktor
+        ";
+
+        assert_eq!(
+            Vec::from(["Duck duct Go,", "call me Ducktor"]),
+            search_case_insensitive(query, contents)
         );
     }
 }
