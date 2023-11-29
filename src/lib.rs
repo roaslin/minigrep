@@ -43,7 +43,7 @@ mod tests {
 
     #[test]
     fn returns_empty_vector_when_contents_is_empty() {
-        let query = "duct";
+        let query = "Duct";
         let contents = "";
         let empty_vector: Vec<&str> = Vec::from([]);
 
@@ -51,23 +51,23 @@ mod tests {
     }
 
     #[test]
-    fn returns_one_line_when_contents_contain_query() {
-        let query = "duct";
-        let contents = "cacafuti ductionary";
+    fn returns_one_line_when_contents_contain_case_sensitive_query() {
+        let query = "Duct";
+        let contents = "cacafuti Ductionary";
 
-        assert_eq!(Vec::from(["cacafuti ductionary"]), search(query, contents));
+        assert_eq!(Vec::from(["cacafuti Ductionary"]), search(query, contents));
     }
 
     #[test]
-    fn returns_two_lines_when_contents_contain_query() {
-        let query = "duct";
+    fn returns_two_lines_when_contents_case_sensitive_query() {
+        let query = "Duck";
         let contents = "cacafuti ductionary
         Duck duct Go,
-        call me
+        call me Ducktor
         ";
 
         assert_eq!(
-            Vec::from(["cacafuti ductionary", "Duck duct Go,"]),
+            Vec::from(["Duck duct Go,", "call me Ducktor"]),
             search(query, contents)
         );
     }
